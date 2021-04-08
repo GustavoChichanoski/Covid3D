@@ -1,7 +1,12 @@
 *.nii
+<<<<<<< HEAD
 *.tiff
 /CTs
 /outputs
 /.vscode
 main.py
 **__pycache__
+=======
+CTs
+main.py
+>>>>>>> 3f0f3b36ec227fa859224a2f34fb4cd3c93da46c
