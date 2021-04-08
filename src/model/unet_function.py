@@ -128,7 +128,7 @@ def dice_coef(y_true, y_pred):
     return total_loss
 
 def dice_coef_loss(y_true, y_pred):
-    accuracy = 1 - dice_coef(y_true, y_pred)
+    accuracy = dice_coef(y_true, y_pred)
     return accuracy
 
 # def callbacks() -> List[Callback]:

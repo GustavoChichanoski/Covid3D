@@ -19,7 +19,7 @@ def read_nii(filepath: Union[Path, List[Path]]):
 def read(filepath: Union[List[Path],Path],resize: int = None):
     if isinstance(filepath,list) or filepath.is_dir():
         array = np.array([])
-        for file in filepath.iterdir():
+        for file in filepath:
             image = read(filepath=file,resize=resize)
             array = np.append(array,image)
         return array
