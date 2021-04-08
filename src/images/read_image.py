@@ -16,14 +16,17 @@ def read_nii(filepath: Union[Path, List[Path]]):
         return array
 
 
-def read(filepath: Union[List[Path],Path]):
-    if isinstance(filepath,list):
+def read(filepath: Union[List[Path],Path],resize: int = None):
+    if isinstance(filepath,list) or filepath.is_dir():
         array = np.array([])
-        for file in filepath:
-            image = cv.imread(str(file))
-            image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        for file in filepath.iterdir():
+            image = read(filepath=file,resize=resize)
             array = np.append(array,image)
         return array
     else:
             image = cv.imread(str(filepath))
-            return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+            image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+            if resize is not None and resize > 0:
+                image = cv.resize(image,(resize,resize))
+            image = cv.equalizeHist(image)
+            return image
