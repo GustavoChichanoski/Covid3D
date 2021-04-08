@@ -7,7 +7,7 @@ from keras.models import Input
 from keras.layers import Conv2D
 from keras.layers import Dropout
 from keras.layers import MaxPooling2D
-from keras.optimizer_v2.adamax import Adamax
+from keras.optimizers import Adamax
 
 
 class UNet:
@@ -28,7 +28,7 @@ class UNet:
         self.final_activation = final_activation
         self.depth = depth
         self.n_class = n_class
-        
+
         self._lazy_callbacks = None
         self._lazy_metrics = None
         self._lazy_model = None

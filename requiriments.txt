@@ -1,6 +1,6 @@
-numpy
-tensorflow
-keras
-pandas
-pathlib
-matplotlib
+numpy>=1.20.2
+tensorflow>=2.4.1
+keras>=2.4.3
+pandas>=1.2.3
+pathlib>=1.0.1
+matplotlib>=3.4.1
