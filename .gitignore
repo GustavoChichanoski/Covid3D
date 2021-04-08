@@ -1,2 +1,6 @@
 *.nii
-CTs
+*.tiff
+/CTs
+/outputs
+/.vscode
+main.py
