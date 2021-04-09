@@ -41,11 +41,11 @@ def get_callbacks() -> List[Callback]:
         'mode': 'min', 'min_delta': 1e-3,
         'cooldown': 2, 'min_lr': 1e-8
     }
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', **reduce_params)
+    reduce_lr = ReduceLROnPlateau(monitor='loss', **reduce_params)
 
     # Parada do treino caso o monitor nao diminua
     stop_params = {'mode':'min', 'restore_best_weights':True, 'patience':40}
-    early_stop = EarlyStopping(monitor='val_f1', **stop_params)
+    early_stop = EarlyStopping(monitor='f1', **stop_params)
 
     # Termina se um peso for NaN (not a number)
     terminate = TerminateOnNaN()

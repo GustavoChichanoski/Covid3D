@@ -7,7 +7,7 @@ class F1score(m.Metric):
 
     def __init__(self, name: str = 'f1', **kwargs) -> None:
         super(F1score, self).__init__(name=name, **kwargs)
-        self.f1score = self.add_weight(name='tp', initializer='zeros')
+        self.f1score = self.add_weight(name='tp')
 
     def result(self):
         return self.f1score
@@ -15,16 +15,17 @@ class F1score(m.Metric):
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(K.round(K.clip(y_true, 0, 1)), tf.bool)
         y_pred = tf.cast(K.round(K.clip(y_pred, 0, 1)), tf.bool)
+
         tp = self.true_positive(y_true, y_pred, sample_weight)
         tn = self.true_negative(y_true, y_pred, sample_weight)
+
         fp = self.false_positive(y_true, y_pred, sample_weight)
         fn = self.false_negative(y_true, y_pred, sample_weight)
-        self.f1score = self.f1_score(tp, tn, fp, fn)
 
+        self.f1score = f1_score(tp, tn, fp, fn)
 
     def false_negative(self, y_true, y_pred, sample_weight):
-        tn = tf.logical_and(tf.equal(y_true, True),
-                            tf.equal(y_pred, False))
+        tn = tf.logical_and(tf.equal(y_true, True), tf.equal(y_pred, False))
         tn = tf.cast(tn, self.dtype)
         if sample_weight is not None:
             sample_weight = tf.cast(tn, self.dtype)
@@ -58,10 +59,8 @@ class F1score(m.Metric):
             tp = tf.multiply(tp, sample_weight)
         return tf.reduce_sum(tp)
 
-    def f1_score(self, tp, tn, fp, fn):
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        return 2 * (precision * recall) / (precision + recall)
 
-    def reset_state(self):
-        self.f1score.assign(0)
+def f1_score(tp, tn, fp, fn):
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    return 2 * (precision * recall) / (precision + recall)
