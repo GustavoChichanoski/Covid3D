@@ -24,9 +24,9 @@ def read(filepath: Union[List[Path],Path],resize: int = None):
             array = np.append(array,image)
         return array
     else:
-            image = cv.imread(str(filepath))
-            image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+            image = cv.imread(filename=str(filepath))
+            cv.cvtColor(src=image,code=cv.COLOR_BGR2GRAY,dst=image)
             if resize is not None and resize > 0:
-                image = cv.resize(image,(resize,resize))
-            image = cv.equalizeHist(image)
+                cv.resize(src=image,dsize=(resize,resize),dst=image)
+            cv.equalizeHist(src=image,dst=image)
             return image
