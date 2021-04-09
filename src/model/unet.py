@@ -48,7 +48,7 @@ class UNet:
     def fit(
         self,
         train_generator: Generator,
-        val_generator:Generator,
+        val_generator: Generator,
         **params
     ):
         history = self.model.fit(

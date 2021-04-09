@@ -30,7 +30,7 @@ def get_callbacks() -> List[Callback]:
     # Salva os pesos dos modelo para serem carregados
     # caso o monitor não diminua
     check_params = {
-        'monitor': 'val_loss', 'verbose': 1, 'mode': 'min',
+        'monitor': 'loss', 'verbose': 1, 'mode': 'min',
         'save_best_only': True, 'save_weights_only': True
     }
     checkpoint = ModelCheckpoint('./checkpoints/', **check_params)
@@ -128,7 +128,7 @@ def dice_coef(y_true, y_pred):
     return total_loss
 
 def dice_coef_loss(y_true, y_pred):
-    accuracy = dice_coef(y_true, y_pred)
+    accuracy = 1 - dice_coef(y_true, y_pred)
     return accuracy
 
 # def callbacks() -> List[Callback]:

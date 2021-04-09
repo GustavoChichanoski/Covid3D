@@ -29,4 +29,5 @@ def read(filepath: Union[List[Path],Path],resize: int = None):
         if resize is not None and resize > 0:
             image = cv.resize(src=image,dsize=(resize,resize))
         image = cv.equalizeHist(src=image)
+        image = image / 255
         return image
