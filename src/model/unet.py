@@ -80,15 +80,13 @@ class UNet:
             store_layers = {}
             inputs = Input(self.input_size)
             first_layers = inputs
-            params = {'kernel_size': kernel_size,
-                      'activation': self.activation}
+            params = {'kernel_size': kernel_size, 'activation': self.activation}
             for i in range(self.depth):
                 filters = (2**i) * self.filter_root
                 layer = unet_conv(
                     layer=first_layers,
                     filters=filters,
-                    depth=i,
-                    **params
+                    depth=i, **params
                 )
                 if i < self.depth - 1:
                     store_layers[str(i)] = layer
@@ -117,7 +115,7 @@ class UNet:
             layer = Dropout(0.33, name='Drop_1')(layer)
             outputs = Conv2D(
                 self.n_class,
-                (1, 1),
+                 (1, 1),
                 padding='same',
                 activation=self.final_activation,
                 name='output'

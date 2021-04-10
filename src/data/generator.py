@@ -9,7 +9,7 @@ class Generator(Sequence):
 
     def __init__(
         self,
-        data: Tuple[str,str],
+        data: Tuple[str, str],
         batch_size: int = 32,
         dim: int = 512,
         n_class: int = 1,
@@ -38,7 +38,7 @@ class Generator(Sequence):
 
     def __next__(self):
         if self.n <= self.__len__(self):
-            result = self.__getitem__(self,self.n)
+            result = self.__getitem__(self, self.n)
             self.n += 1
             return result
         else:
@@ -61,10 +61,12 @@ class Generator(Sequence):
         batch_x = self.x[idx * self.batch_size: (idx + 1) * self.batch_size]
         batch_y = self.y[idx * self.batch_size: (idx + 1) * self.batch_size]
 
-        batch_x = read(filepath=batch_x)
-        batch_y = read(filepath=batch_y)
+        batch_x = read(filepath=batch_x, resize=self.dim)
+        batch_y = read(filepath=batch_y, resize=self.dim)
 
-        batch_x = batch_x.reshape(self.batch_size, self.dim, self.dim, self.n_channels)
-        batch_y = batch_y.reshape(self.batch_size, self.dim, self.dim, self.n_class)
+        shape_x = (self.batch_size, self.dim, self.dim, self.n_channels)
+        shape_y = (self.batch_size, self.dim, self.dim, self.n_channels)
+        batch_x = np.reshape(batch_x, shape_x)
+        batch_y = np.reshape(batch_y, shape_y)
 
         return batch_x, batch_y

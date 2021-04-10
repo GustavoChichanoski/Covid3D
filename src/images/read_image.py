@@ -25,9 +25,13 @@ def read(filepath: Union[List[Path],Path],resize: int = None):
         return array
     else:
         image = cv.imread(filename=str(filepath))
-        image = cv.cvtColor(src=image,code=cv.COLOR_BGR2GRAY)
+        image_gray = cv.cvtColor(src=image,code=cv.COLOR_BGR2GRAY,dst=image)
         if resize is not None and resize > 0:
-            image = cv.resize(src=image,dsize=(resize,resize))
-        image = cv.equalizeHist(src=image)
-        image = image / 255
+            image_resize = cv.resize(
+                src=image_gray,
+                dsize=(resize,resize),
+                interpolation=cv.INTER_AREA,
+            )
+            image_gray = image_resize
+        image = image_gray / 256
         return image

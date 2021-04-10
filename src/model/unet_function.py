@@ -17,6 +17,7 @@ from keras.metrics import BinaryAccuracy
 from keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TerminateOnNaN
 from keras import backend as K
 
+
 def get_callbacks() -> List[Callback]:
     """
         Retorna a lista callbacks do modelo
@@ -44,7 +45,7 @@ def get_callbacks() -> List[Callback]:
     reduce_lr = ReduceLROnPlateau(monitor='loss', **reduce_params)
 
     # Parada do treino caso o monitor nao diminua
-    stop_params = {'mode':'min', 'restore_best_weights':True, 'patience':40}
+    stop_params = {'mode': 'min', 'restore_best_weights': True, 'patience': 40}
     early_stop = EarlyStopping(monitor='f1', **stop_params)
 
     # Termina se um peso for NaN (not a number)
@@ -61,6 +62,7 @@ def get_callbacks() -> List[Callback]:
     callbacks = [checkpoint, early_stop, reduce_lr, terminate]
     return callbacks
 
+
 def unet_conv(
     layer: Layer,
     filters: int = 32,
@@ -69,15 +71,20 @@ def unet_conv(
     depth: int = 0
 ) -> Layer:
     for i in range(2):
-        params = {'filters': filters, 'kernel_size': kernel_size, 'padding':'same'}
-        layer = Conv2D(name=f"Conv{depth}_{i}",**params)(layer)
-        layer = Activation(activation=activation, name=f"Act{depth}_{i}")(layer)
+        params = {'filters': filters,
+                  'kernel_size': kernel_size, 'padding': 'same'}
+        layer = Conv2D(name=f"Conv{depth}_{i}", **params)(layer)
+        layer = Activation(activation=activation,
+                           name=f"Act{depth}_{i}")(layer)
     return layer
 
-def up_conct(layer: Layer, connection: Layer, depth:int = 0) -> Layer:
+
+def up_conct(layer: Layer, connection: Layer, depth: int = 0) -> Layer:
     layer = UpSampling2D(name=f'UpSampling{depth}_1')(layer)
-    layer = Concatenate(axis=-1, name=f'UpConcatenate{depth}_1')([layer, connection])
+    layer = Concatenate(
+        axis=-1, name=f'UpConcatenate{depth}_1')([layer, connection])
     return layer
+
 
 def metrics() -> List[Metric]:
     tp = TruePositives(name='tp')
@@ -86,7 +93,8 @@ def metrics() -> List[Metric]:
     fn = FalsePositives(name='fn')
     ba = BinaryAccuracy(name='ba')
     f1 = F1score(name='f1')
-    return [tp,tn,fp,fn,ba,f1]
+    return [tp, tn, fp, fn, ba, f1]
+
 
 def dice_coef(y_true, y_pred):
     ''' Dice Coefficient
@@ -126,6 +134,7 @@ def dice_coef(y_true, y_pred):
     total_loss = total_loss / class_num
 
     return total_loss
+
 
 def dice_coef_loss(y_true, y_pred):
     accuracy = 1 - dice_coef(y_true, y_pred)
