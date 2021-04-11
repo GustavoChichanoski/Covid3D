@@ -17,7 +17,7 @@ class UNet:
         input_size: Tuple[int, int, int] = (256, 256, 1),
         filter_root: int = 32,
         activation: str = 'relu',
-        final_activation: str = 'softmax',
+        final_activation: str = 'sigmoid',
         depth: int = 5,
         n_class: int = 1
     ) -> None:
@@ -80,20 +80,23 @@ class UNet:
             store_layers = {}
             inputs = Input(self.input_size)
             first_layers = inputs
-            params = {'kernel_size': kernel_size, 'activation': self.activation}
+            params = {'kernel_size': kernel_size,
+                      'activation': self.activation}
             for i in range(self.depth):
                 filters = (2**i) * self.filter_root
                 layer = unet_conv(
                     layer=first_layers,
                     filters=filters,
-                    depth=i, **params
+                    depth=i,
+                    name="Down",
+                    **params
                 )
                 if i < self.depth - 1:
                     store_layers[str(i)] = layer
                     first_layers = MaxPooling2D(
                         pool_size=(2, 2),
                         padding='same',
-                        name=f'MaxPooling{i}_1'
+                        name=f'MaxPooling{i}_0'
                     )(layer)
                 else:
                     first_layers = layer
@@ -103,19 +106,20 @@ class UNet:
                 layer = up_conct(
                     layer=first_layers,
                     connection=connection,
-                    depth=i
+                    depth=self.depth - i
                 )
                 layer = unet_conv(
                     layer=layer,
                     filters=filters,
-                    depth=i+self.depth,
+                    depth=self.depth - i,
+                    name="Up",
                     **params
                 )
                 first_layers = layer
             layer = Dropout(0.33, name='Drop_1')(layer)
             outputs = Conv2D(
-                self.n_class,
-                 (1, 1),
+                filters=self.n_class,
+                kernel_size=(1, 1),
                 padding='same',
                 activation=self.final_activation,
                 name='output'

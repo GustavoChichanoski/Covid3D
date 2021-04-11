@@ -31,7 +31,7 @@ def get_callbacks() -> List[Callback]:
     # Salva os pesos dos modelo para serem carregados
     # caso o monitor não diminua
     check_params = {
-        'monitor': 'loss', 'verbose': 1, 'mode': 'min',
+        'monitor': 'val_loss', 'verbose': 1, 'mode': 'min',
         'save_best_only': True, 'save_weights_only': True
     }
     checkpoint = ModelCheckpoint('./checkpoints/', **check_params)
@@ -42,11 +42,11 @@ def get_callbacks() -> List[Callback]:
         'mode': 'min', 'min_delta': 1e-3,
         'cooldown': 2, 'min_lr': 1e-8
     }
-    reduce_lr = ReduceLROnPlateau(monitor='loss', **reduce_params)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', **reduce_params)
 
     # Parada do treino caso o monitor nao diminua
     stop_params = {'mode': 'min', 'restore_best_weights': True, 'patience': 40}
-    early_stop = EarlyStopping(monitor='f1', **stop_params)
+    early_stop = EarlyStopping(monitor='val_f1', **stop_params)
 
     # Termina se um peso for NaN (not a number)
     terminate = TerminateOnNaN()
@@ -68,14 +68,13 @@ def unet_conv(
     filters: int = 32,
     kernel_size: Tuple[int, int] = (3, 3),
     activation: str = 'relu',
+    name: str = None,
     depth: int = 0
 ) -> Layer:
     for i in range(2):
-        params = {'filters': filters,
-                  'kernel_size': kernel_size, 'padding': 'same'}
-        layer = Conv2D(name=f"Conv{depth}_{i}", **params)(layer)
-        layer = Activation(activation=activation,
-                           name=f"Act{depth}_{i}")(layer)
+        params = {'filters': filters, 'kernel_size': kernel_size, 'padding': 'same'}
+        layer = Conv2D(name=f"{name}_Conv{depth}_{i}", **params)(layer)
+        layer = Activation(activation=activation, name=f"{name}_Act{depth}_{i}")(layer)
     return layer
 
 
