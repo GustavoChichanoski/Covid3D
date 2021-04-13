@@ -1,6 +1,7 @@
 from src.data.generator import Generator
 from keras.metrics import Metric
 from src.model.unet_function import dice_coef_loss, get_callbacks, metrics, unet_conv, up_conct
+from src.output.save_csv import save_csv
 from typing import List, Tuple
 from keras.models import Model
 from keras.models import Input
@@ -8,6 +9,7 @@ from keras.layers import Conv2D
 from keras.layers import Dropout
 from keras.layers import MaxPooling2D
 from keras.optimizers import Adamax
+from pathlib import Path
 
 
 class UNet:
@@ -44,6 +46,33 @@ class UNet:
         if self._lazy_metrics is None:
             self._lazy_metrics = metrics()
         return self._lazy_metrics
+
+    def save(
+        self,
+        history=None,
+        model: str = 'UNet',
+        name: str = None,
+        metric: str = 'val_f1',
+        parent: Path = Path('./'),
+        verbose: bool = False
+    ) -> str:
+        if name is not None:
+            file = parent / name
+            self.model.save(f'{file}.hdf5', overwrite=True)
+            self.model.save_weights(f'{file}_weights.hdf5', overwrite=True)
+        else:
+            value = 100.00
+            file = 'model.hdf5'
+            if history is not None:
+                value = history[metric][-1] * 100
+                history_path = parent / 'historys' / f'history_{model}_{value}'
+                save_csv(value=history, name=history_path, verbose=verbose)
+            file = parent / 'weights' / f'{model}_{metric}_{value:.02f}.hdf5'
+            self.model.save_weights(file, overwrite=True)
+            if verbose:
+                print(f'[MODEL] Pesos salvos em: {file}')
+            return file
+        return None
 
     def fit(
         self,
