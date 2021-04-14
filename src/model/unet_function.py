@@ -1,5 +1,7 @@
 import importlib
 
+from keras.layers.normalization_v2 import BatchNormalization
+
 from src.model.metrics.f1_score import F1score
 from typing import List, Tuple
 from keras.layers import Layer
@@ -69,12 +71,17 @@ def unet_conv(
     kernel_size: Tuple[int, int] = (3, 3),
     activation: str = 'relu',
     name: str = None,
+    batchnorm: bool = False,
     depth: int = 0
 ) -> Layer:
+    params = {'filters': filters, 'kernel_size': kernel_size,
+              'padding': 'same', 'kernel_initializer': 'he_normal'}
     for i in range(2):
-        params = {'filters': filters, 'kernel_size': kernel_size, 'padding': 'same'}
-        layer = Conv2D(name=f"{name}_Conv{depth}_{i}", **params)(layer)
-        layer = Activation(activation=activation, name=f"{name}_Act{depth}_{i}")(layer)
+        layer = Conv2D(name=f"{name}_Conv_{depth}_{i}", **params)(layer)
+        if batchnorm:
+            layer = BatchNormalization(name=f'BN_{depth}_{i}')(layer)
+        layer = Activation(activation=activation,
+                           name=f"{name}_Act_{depth}_{i}")(layer)
     return layer
 
 
@@ -121,7 +128,7 @@ def dice_coef(y_true, y_pred):
         # Smooth - Evita que o denominador fique muito pequeno
         smooth = K.constant(1e-6)
         # Calculo o erro entre eles
-        num = (K.constant(2)*intersection + 1)
+        num = (K.constant(2) * intersection + 1)
         den = (union + smooth)
         loss = num / den
 

@@ -1,3 +1,4 @@
+from keras.backend import dropout
 from src.data.generator import Generator
 from keras.metrics import Metric
 from src.model.unet_function import dice_coef_loss, get_callbacks, metrics, unet_conv, up_conct
@@ -21,7 +22,8 @@ class UNet:
         activation: str = 'relu',
         final_activation: str = 'sigmoid',
         depth: int = 5,
-        n_class: int = 1
+        n_class: int = 1,
+        dropout: float = 0.1
     ) -> None:
         super(UNet, self).__init__()
         self.input_size = input_size
@@ -30,6 +32,7 @@ class UNet:
         self.final_activation = final_activation
         self.depth = depth
         self.n_class = n_class
+        self.dropout = dropout
 
         self._lazy_callbacks = None
         self._lazy_metrics = None
@@ -127,6 +130,10 @@ class UNet:
                         padding='same',
                         name=f'MaxPooling{i}_0'
                     )(layer)
+                    if self.dropout > 0:
+                        first_layers = Dropout(
+                            rate=self.dropout, name=f'Down_Drop_{i}'
+                        )(first_layers)
                 else:
                     first_layers = layer
             for i in range(self.depth-2, -1, -1):
@@ -137,6 +144,10 @@ class UNet:
                     connection=connection,
                     depth=self.depth - i
                 )
+                if self.dropout > 0:
+                        layer = Dropout(
+                            rate=self.dropout, name=f'Up_Drop_{i}'
+                        )(layer)
                 layer = unet_conv(
                     layer=layer,
                     filters=filters,
