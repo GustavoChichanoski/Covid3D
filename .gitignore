@@ -3,6 +3,10 @@
 /CTs
 /outputs
 /.vscode
+/data
+/checkpoints
+/new_data
+fix_name_images.py
 main.py
 **__pycache__
 *.rar

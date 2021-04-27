@@ -1,23 +1,23 @@
 import importlib
 
-from keras.layers.normalization_v2 import BatchNormalization
 
 from src.model.metrics.f1_score import F1score
 from typing import List, Tuple
-from keras.layers import Layer
-from keras.layers import Concatenate
-from keras.layers import UpSampling2D
-from keras.layers import Activation
-from keras.layers import Concatenate
-from keras.layers import Conv2D
-from keras.metrics import Metric
-from keras.metrics import TruePositives
-from keras.metrics import TrueNegatives
-from keras.metrics import FalseNegatives
-from keras.metrics import FalsePositives
-from keras.metrics import BinaryAccuracy
-from keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TerminateOnNaN
-from keras import backend as K
+from tensorflow.python.keras.layers import BatchNormalizationV2
+from tensorflow.python.keras.layers import Layer
+from tensorflow.python.keras.layers import Concatenate
+from tensorflow.python.keras.layers import UpSampling2D
+from tensorflow.python.keras.layers import Activation
+from tensorflow.python.keras.layers import Concatenate
+from tensorflow.python.keras.layers import Conv2D
+from tensorflow.python.keras.metrics import Metric
+from tensorflow.python.keras.metrics import TruePositives
+from tensorflow.python.keras.metrics import TrueNegatives
+from tensorflow.python.keras.metrics import FalseNegatives
+from tensorflow.python.keras.metrics import FalsePositives
+from tensorflow.python.keras.metrics import BinaryAccuracy
+from tensorflow.python.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TerminateOnNaN
+from tensorflow.python.keras import backend as K
 
 
 def get_callbacks() -> List[Callback]:
@@ -79,7 +79,7 @@ def unet_conv(
     for i in range(2):
         layer = Conv2D(name=f"{name}_Conv_{depth}_{i}", **params)(layer)
         if batchnorm:
-            layer = BatchNormalization(name=f'BN_{depth}_{i}')(layer)
+            layer = BatchNormalizationV2(name=f'BN_{depth}_{i}')(layer)
         layer = Activation(activation=activation,
                            name=f"{name}_Act_{depth}_{i}")(layer)
     return layer

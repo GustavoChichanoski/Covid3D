@@ -10,4 +10,3 @@ def np2cv(value):
 def np2keras(value, shape: Tuple[int, int, int]):
     keras = np.array(value)
     return keras.reshape(shape)
-    

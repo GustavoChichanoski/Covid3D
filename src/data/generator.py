@@ -1,7 +1,7 @@
 from pathlib import Path
 from src.images.read_image import read
 from typing import Any, List, Tuple, Union
-from keras.utils.data_utils import Sequence
+from tensorflow.python.keras.utils.data_utils import Sequence
 import numpy as np
 
 

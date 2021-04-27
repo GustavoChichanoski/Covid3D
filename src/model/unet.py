@@ -1,15 +1,15 @@
-from keras.backend import dropout
 from src.data.generator import Generator
-from keras.metrics import Metric
 from src.model.unet_function import dice_coef_loss, get_callbacks, metrics, unet_conv, up_conct
 from src.output.save_csv import save_csv
 from typing import List, Tuple
-from keras.models import Model
-from keras.models import Input
-from keras.layers import Conv2D
-from keras.layers import Dropout
-from keras.layers import MaxPooling2D
-from keras.optimizers import Adamax
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.models import Input
+from tensorflow.python.keras.layers import Conv2D
+from tensorflow.python.keras.layers import Dropout
+from tensorflow.python.keras.layers import MaxPooling2D
+from tensorflow.python.keras.backend import dropout
+from tensorflow.python.keras.metrics import Metric
+from tensorflow.python.keras.optimizer_v2.adamax import Adamax
 from pathlib import Path
 
 
